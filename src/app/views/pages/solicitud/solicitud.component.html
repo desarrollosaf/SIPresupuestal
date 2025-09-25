@@ -1,0 +1,67 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<div class="row">
+    <div class="col-md-12 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Solicitudes</h6>
+                <div class="row">
+                    <div class="col-xl-3 col-md-4">
+                        <input type="text" class="form-control form-control-sm" placeholder="Buscar..."
+                            (keyup)="updateFilter($event)" />
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-sm btn-primary me-2" [routerLink]="['/solicitud/add-solicitud']">
+                            <i class="bi bi-pencil-square"></i> Registrar
+                        </button>
+                    </div>
+                </div>
+                <br>
+
+                <div class="table-responsive">
+                    <div *ngIf="rows.length === 0 && !loading" class="text-center my-3">
+                        <p><strong>No hay datos para mostrar</strong></p>
+                    </div>
+                    <ngx-datatable #table class="bootstrap" [rows]="rows" [columnMode]="'force'" [headerHeight]="50"
+                        *ngIf="rows.length > 0" [footerHeight]="50" [externalSorting]="true" [externalPaging]="true"
+                        [rowHeight]="'auto'" [limit]="pageSize" [count]="filteredCount" [offset]="page"
+                        (page)="setPage($event)" [loadingIndicator]="loading">
+                        <ngx-datatable-column prop="folio" [headerClass]="'text-center'" [cellClass]="'text-center'"
+                            name="Folio">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+
+                            </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column prop="tipo" [headerClass]="'text-center'" [cellClass]="'text-center'"
+                            name="Tipo">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+
+                            </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column prop="importe" [headerClass]="'text-center'" [cellClass]="'text-center'"
+                            name="Importe">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+
+                            </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column prop="estatus" [headerClass]="'text-center'" [cellClass]="'text-center'"
+                            name="Estatus">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+
+                            </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column [headerClass]="'text-center'" [cellClass]="'text-center'" name="PDF">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+
+                            </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column [headerClass]="'text-center'" [cellClass]="'text-center'" name="Detalle">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+
+                            </ng-template>
+                        </ngx-datatable-column>
+                    </ngx-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

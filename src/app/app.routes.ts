@@ -45,6 +45,10 @@ export const routes: Routes = [
       {
         path: 'general',
         loadChildren: () => import('./views/pages/general/general.routes')
+      },
+        {
+        path: 'solicitud',
+        loadChildren: () => import('./views/pages/solicitud/solicitud.route')
       }
     ]
   },

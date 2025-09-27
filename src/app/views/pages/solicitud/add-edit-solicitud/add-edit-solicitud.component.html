@@ -1,16 +1,194 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <div class="row">
-  <div class="col-md-12 stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title text-center">
-         Registro Solicitud
-        </h6>
-        <div class="row">
- dd
-        </div>
+    <div class="col-md-12 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title text-center">
+                    Registro Solicitud
+                </h6>
+                <form [formGroup]="formSolicitud" (ngSubmit)="enviarDatos()" class="forms-sample">
+                    <div class="row justify-content-end">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Folio:</label>
+                                <input formControlName="folio" type="text" class="form-control input-simulado-disabled"
+                                    [readonly]="true" />
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Fecha de solicitud:</label>
+                                <input formControlName="fecha_solicitud" type="date"
+                                    class="form-control input-simulado-disabled" [readonly]="true" />
+                                <div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Solicitud Programático presupuestal:*</label>
+                                <ng-select [items]="tipoSolicitud" bindLabel="nombre" bindValue="id" formControlName="id_programatico_presupuestal" placeholder="Selecciona">
+                                </ng-select>
+                                <small class="colorsm"
+                                    *ngIf="formSolicitud.get('id_programatico_presupuestal')?.hasError('required') && formSolicitud.get('id_programatico_presupuestal')?.touched">Este
+                                    campo es
+                                    <strong>requerido</strong></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Programa:*</label>
+                                <ng-select formControlName="id_programa" placeholder="Selecciona">
+                                </ng-select>
+                                <small class="colorsm"
+                                    *ngIf="formSolicitud.get('id_programa')?.hasError('required') && formSolicitud.get('id_programa')?.touched">Este
+                                    campo es
+                                    <strong>requerido</strong></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Tipo de Tramite:*</label>
+                                <ng-select formControlName="tipo_tramite" placeholder="Selecciona">
+                                </ng-select>
+                                <small class="colorsm"
+                                    *ngIf="formSolicitud.get('tipo_tramite')?.hasError('required') && formSolicitud.get('tipo_tramite')?.touched">Este
+                                    campo es
+                                    <strong>requerido</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Proyecto:*</label>
+                                <ng-select formControlName="id_proyecto" placeholder="Selecciona">
+                                </ng-select>
+                                <small class="colorsm"
+                                    *ngIf="formSolicitud.get('id_proyecto')?.hasError('required') && formSolicitud.get('id_proyecto')?.touched">Este
+                                    campo es
+                                    <strong>requerido</strong></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Dependencia:*</label>
+                                <ng-select formControlName="id_dependencia" placeholder="Selecciona">
+                                </ng-select>
+                                <small class="colorsm"
+                                    *ngIf="formSolicitud.get('id_dependencia')?.hasError('required') && formSolicitud.get('id_dependencia')?.touched">Este
+                                    campo es
+                                    <strong>requerido</strong></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Clave unidad administrativa:</label>
+                                <input formControlName="id_unidadAdm" type="text"
+                                    class="form-control input-simulado-disabled" [readonly]="true" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Tipo de Beneficiario:</label><br />
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" formControlName="tipo_beneficiario"
+                                        [value]="'servidor'" id="servidor" />
+                                    <label class="form-check-label" for="servidor">Servidor Público</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" formControlName="tipo_beneficiario"
+                                        [value]="'proveedor'" id="proveedor" />
+                                    <label class="form-check-label" for="proveedor">Proveedor</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="mb-3" *ngIf="formSolicitud.get('tipo_beneficiario')?.value">
+                                <label class="form-label negri">Beneficiario:</label>
+                                <ng-select [items]="beneficiarios" bindLabel="nombre" bindValue="id"
+                                    formControlName="id_beneficiario" placeholder="Seleccione un beneficiario"
+                                    [clearable]="true">
+                                </ng-select>
+                                   <small class="colorsm"
+                                    *ngIf="formSolicitud.get('id_beneficiario')?.hasError('required') && formSolicitud.get('id_beneficiario')?.touched">Este
+                                    campo es
+                                    <strong>requerido</strong></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="mb-3" *ngIf="formSolicitud.get('tipo_beneficiario')?.value === 'proveedor'">
+                                <label class="form-label negri">Número de Contrato:</label>
+                                <input type="text" class="form-control" formControlName="num_contrato"
+                                    placeholder="Ingrese el número de contrato" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Importe:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" formControlName="importe" id="importe"
+                                        placeholder="0.00" step="0.01" min="0" (blur)="actualizarImporteLetra()" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="mb-3">
+                                <label class="form-label negri">Importe en Letra:</label>
+                                <input type="text" class="form-control" formControlName="importe_letra"
+                                    id="importe_letra" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="mb-3">
+                                <label class="form-label negri">Justificación / observaciones:*</label>
+                                <textarea formControlName="observaciones" class="form-control"
+                                    id="exampleFormControlTextarea1" rows="6"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="mb-3 d-flex flex-column h-100">
+                                <label class="form-label1 negri">Adjuntar archivos:*</label>
+                                <div class="position-relative d-flex flex-column flex-grow-1"
+                                    style="min-height: 10px; padding-bottom: 1rem;">
+                                    <input class="form-control" type="file" id="constancia_situacion_fiscal"
+                                        accept="application/pdf" multiple #inputfileAdj
+                                        (change)="onFileSelect($event, 'fileAdj', inputfileAdj)" />
 
-      </div>
+                                    <div *ngIf="documentos['fileAdj'] && documentos['fileAdj'].length > 0" class="mt-2">
+                                        <div *ngFor="let archivo of documentos['fileAdj']; let i = index"
+                                            class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-truncate" style="max-width: 80%">
+                                                📄 {{ archivo.name }}
+                                            </span>
+                                            <button type="button" class="boton-danger-sm ms-2"
+                                                (click)="eliminarArchivo('fileAdj', i, inputfileAdj)">
+                                                <i class="feather icon-trash btn-icon-prepend"></i>
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgxDatatableModule } from '@siemens/ngx-datatable';
 
 @Component({
   selector: 'app-solicitud',
-  imports: [NgxDatatableModule, CommonModule,RouterModule],
+  imports: [NgxDatatableModule, CommonModule,RouterModule,ReactiveFormsModule],
   templateUrl: './solicitud.component.html',
   styleUrl: './solicitud.component.scss'
 })
@@ -18,7 +19,7 @@ export class SolicitudComponent {
   filteredCount: number = 0;
   loading: boolean = true;
   response: any[] = []
-
+ 
   ngOnInit(): void {
     this.originalData = [...this.response];
     this.temp = [...this.originalData];

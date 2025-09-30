@@ -1,13 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import Swal from 'sweetalert2';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  effect
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-edit-solicitud',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgSelectModule],
+
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgSelectModule, FormsModule
+  ],
   templateUrl: './add-edit-solicitud.component.html',
   styleUrl: './add-edit-solicitud.component.scss'
 })
@@ -29,9 +38,53 @@ export class AddEditSolicitudComponent {
     { id: '2', nombre: 'GASTOS A COMPROBAR' },
     { id: '3', nombre: 'PARA PAGO' },
   ];
-
+  opcionesUnidad = ['UNIDAD 1', 'UNIDAD 2', 'UNIDAD 3'];
+  opcionesActividad = ['ACTIVIDAD A', 'ACTIVIDAD B', 'ACTIVIDAD C'];
+  opcionesPartida = ['PARTIDA X', 'PARTIDA Y', 'PARTIDA Z'];
+  opcionesPais = ['México', 'Estados Unidos', 'Europa'];
+  opcionesFacturaExtranjera = ['Sí', 'No'];
+  opcionesCuentaConFactura = ['Sí', 'No'];
   documentos: { [campo: string]: File[] } = {};
+  documentossoli1: { [campo: string]: File[] } = {};
+  documentossoli2: { [campo: string]: File[] } = {};
 
+
+
+
+
+
+  detalles: any[] = [];
+  validacionCompr = false;
+  nuevoDetalle: any = {
+    unidad: '',
+    actividad: '',
+    partida: '',
+    importe: null,
+    cuenta_con_factura: '',
+    rfc_emisor: 'N/A',
+    nombre_emisor: 'N/A',
+    concepto: 'N/A',
+    folio: 'N/A',
+    pais: 'N/A',
+    factura_extranjera: 'N/A',
+    tax_id: 'N/A',
+  };
+
+  nuevoDetalle1: any = {
+    unidad: '',
+    actividad: '',
+    partida: '',
+    importe: null,
+  };
+
+  get mostrarFormularioSimple() {
+    const val = this.formSolicitud.get('id_programatico_presupuestal')?.value;
+    return val === '1' || val === '2';
+  }
+
+  get mostrarFormularioFactura() {
+    return this.formSolicitud.get('id_programatico_presupuestal')?.value === '3';
+  }
   constructor(private fb: FormBuilder) {
     this.formSolicitud = this.fb.group({
       folio: ['', Validators.required],
@@ -52,6 +105,37 @@ export class AddEditSolicitudComponent {
     });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    this.formSolicitud.get('id_programatico_presupuestal')?.valueChanges.subscribe(valor => {
+      if (valor === '1' || valor === '2') {
+        this.detalles = [];
+        this.resetNuevoDetalle();
+      }
+
+      if (valor === '3') {
+        this.detalles = [];
+        this.resetNuevoDetalle();
+      }
+    });
+
+
+
+
+
     this.formSolicitud.get('tipo_beneficiario')?.valueChanges.subscribe((tipo) => {
       if (tipo === 'servidor') {
         this.beneficiarios = this.servidoresPublicos;
@@ -65,16 +149,108 @@ export class AddEditSolicitudComponent {
     });
   }
 
+  agregarDetalleSimple() {
+const { unidad, actividad, partida, importe,rfc_emisor,nombre_emisor,concepto,folio,pais,factura_extranjera,tax_id,cuenta_con_factura } = this.nuevoDetalle;
+console.log(cuenta_con_factura);
+    if (unidad && actividad && partida && importe > 0) {
+  
+      this.detalles.push({
+        unidad,
+        actividad,
+        partida,
+        importe: parseFloat(importe).toFixed(2),
+        rfc_emisor: cuenta_con_factura === 'Sí' ? 'N/A' : rfc_emisor,
+        nombre_emisor: cuenta_con_factura === 'Sí' ? 'N/A' : nombre_emisor,
+        concepto: cuenta_con_factura === 'Sí' ? 'N/A' : concepto,
+        folio: cuenta_con_factura === 'Sí' ? 'N/A' : folio,
+        pais: cuenta_con_factura === 'Sí' ? 'N/A' : pais,
+        factura_extranjera: cuenta_con_factura === 'Sí' ? 'N/A' : factura_extranjera,
+        tax_id: cuenta_con_factura === 'Sí' ? 'N/A' : tax_id,
+      });
+
+      this.resetDetalle2();
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "¡Atención!",
+        text: `Completa todos los campos antes de agregar`,
+        showConfirmButton: false,
+        timer: 2000
+      });
+    }
+
+  }
+
+
+  agregarDetalle() {
+    const { unidad, actividad, partida, importe } = this.nuevoDetalle;
+
+    if (unidad && actividad && partida && importe > 0) {
+      this.detalles.push({
+        unidad,
+        actividad,
+        partida,
+        importe: parseFloat(importe).toFixed(2),
+      });
+
+      this.resetNuevoDetalle();
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "¡Atención!",
+        text: `Completa todos los campos antes de agregar`,
+        showConfirmButton: false,
+        timer: 2000
+      });
+    }
+  }
+
+  eliminarDetalle(index: number) {
+    this.detalles.splice(index, 1);
+  }
+
+  resetNuevoDetalle() {
+    this.nuevoDetalle = {
+      unidad: '',
+      actividad: '',
+      partida: '',
+      importe: null,
+    };
+  }
+
+  resetDetalle2(){
+
+     this.nuevoDetalle = {
+       unidad: '',
+    actividad: '',
+    partida: '',
+    importe: null,
+    cuenta_con_factura: '',
+    rfc_emisor: 'N/A',
+    nombre_emisor: 'N/A',
+    concepto: 'N/A',
+    folio: 'N/A',
+    pais: 'N/A',
+    factura_extranjera: 'N/A',
+    tax_id: 'N/A',
+    };
+   
+  }
 
   actualizarImporteLetra() {
     const rawValue = this.formSolicitud.get('importe')?.value;
     if (rawValue !== null && rawValue !== undefined && rawValue !== '') {
       const valor = parseFloat(rawValue);
       if (!isNaN(valor)) {
-        const partes = valor.toFixed(2).split('.');
+        const redondeado = valor.toFixed(2);
+        this.formSolicitud.get('importe')?.setValue(redondeado);
+        const partes = redondeado.split('.');
         const pesos = this.numeroALetras(Number(partes[0]));
         const centavos = partes[1] || '00';
         const texto = `${pesos} pesos ${centavos}/100 M.N.`;
+
         this.formSolicitud.get('importe_letra')?.setValue(texto);
       } else {
         this.formSolicitud.get('importe_letra')?.setValue('');
@@ -230,5 +406,5 @@ export class AddEditSolicitudComponent {
   enviarDatos() {
     console.log(this.formSolicitud.value);
   }
-  
+
 }

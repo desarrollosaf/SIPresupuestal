@@ -6,7 +6,7 @@
                 <h6 class="card-title text-center">
                     Registro Solicitud
                 </h6>
-                <form [formGroup]="formSolicitud" (ngSubmit)="enviarDatos()" class="forms-sample">
+                <form [formGroup]="formSolicitud" class="forms-sample">
                     <div class="row justify-content-end">
                         <div class="col-sm-4">
                             <div class="mb-3">
@@ -29,7 +29,8 @@
                         <div class="col-sm-4">
                             <div class="mb-3">
                                 <label class="form-label negri">Solicitud Programático presupuestal:*</label>
-                                <ng-select [items]="tipoSolicitud" bindLabel="nombre" bindValue="id" formControlName="id_programatico_presupuestal" placeholder="Selecciona">
+                                <ng-select [items]="tipoSolicitud" bindLabel="nombre" bindValue="id"
+                                    formControlName="id_programatico_presupuestal" placeholder="Selecciona">
                                 </ng-select>
                                 <small class="colorsm"
                                     *ngIf="formSolicitud.get('id_programatico_presupuestal')?.hasError('required') && formSolicitud.get('id_programatico_presupuestal')?.touched">Este
@@ -116,7 +117,7 @@
                                     formControlName="id_beneficiario" placeholder="Seleccione un beneficiario"
                                     [clearable]="true">
                                 </ng-select>
-                                   <small class="colorsm"
+                                <small class="colorsm"
                                     *ngIf="formSolicitud.get('id_beneficiario')?.hasError('required') && formSolicitud.get('id_beneficiario')?.touched">Este
                                     campo es
                                     <strong>requerido</strong></small>
@@ -185,9 +186,275 @@
                             </div>
                         </div>
                     </div>
-                    <br>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+
                 </form>
+                <div *ngIf="mostrarFormularioSimple" class="p-4 mb-4 rounded" style="background-color: #f9f9f9ef;">
+                    <h4>Gasto por programa</h4>
+                    <br>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Unidad administrativa:*</label>
+                                <ng-select [items]="opcionesUnidad" bindLabel="nombre" bindValue="id"
+                                    [(ngModel)]="nuevoDetalle.unidad" placeholder="Selecciona">
+                                </ng-select>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Actividad:*</label>
+                                <ng-select [items]="opcionesActividad" bindLabel="nombre" bindValue="id"
+                                    [(ngModel)]="nuevoDetalle.actividad" placeholder="Selecciona">
+                                </ng-select>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Partida:*</label>
+                                <ng-select [items]="opcionesPartida" bindLabel="nombre" bindValue="id"
+                                    [(ngModel)]="nuevoDetalle.partida" placeholder="Selecciona">
+                                </ng-select>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-end">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Importe por partida:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" [(ngModel)]="nuevoDetalle.importe"
+                                        id="nuevoDetalle.importe" placeholder="0.00" step="0.01" min="0"
+                                        (blur)="actualizarImporteLetra()" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 d-flex align-items-end">
+                            <div class="mb-3">
+                                <button class="btn text-white d-flex justify-content-center align-items-center" style="
+          width: 36px;
+          height: 36px;
+          background-color: #960948;
+          border-radius: 50%;
+          padding: 0;
+          border: none;
+        " (click)="agregarDetalle()" title="Agregar">
+                                    <i class="bi bi-plus" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+                    <table border="1" class="table table-striped table-bordered table-hover"
+                        style="width: 100%; text-align: center;">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Unidad</th>
+                                <th>Actividad</th>
+                                <th>Partida</th>
+                                <th>Importe</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of detalles; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ item.unidad }}</td>
+                                <td>{{ item.actividad }}</td>
+                                <td>{{ item.partida }}</td>
+                                <td>${{ item.importe }}</td>
+                                <td>
+                                    <button (click)="eliminarDetalle(i)" class="boton-danger-sm ms-2">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div *ngIf="detalles.length === 0" class="text-center my-3">
+                        <p><strong>No hay datos para mostrar</strong></p>
+                    </div>
+                    <br>
+                    <br>
+                    <div *ngIf="!validacionCompr" class="alert alert-warning border-0 shadow-sm p-4 mb-4" role="alert">
+                        <h5 class="alert-heading text-dark mb-2">
+                            <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+                            Importante
+                        </h5>
+                        <p class="mb-0 text-dark">
+                            Una vez aprobado se podrán adjuntar las facturas.
+                        </p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="mb-3 d-flex flex-column h-100">
+                                <label class="form-label1 negri">PDF:</label>
+                                <div class="position-relative d-flex flex-column flex-grow-1"
+                                    style="min-height: 10px; padding-bottom: 1rem;">
+                                    <input class="form-control" type="file" id="pdfgp1" accept="application/pdf"
+                                        multiple #inputpdfgp1 (change)="onFileSelect($event, 'pdfgp1', inputpdfgp1)"
+                                        [disabled]="!validacionCompr" />
+
+                                    <div *ngIf="documentos['pdfgp1'] && documentos['pdfgp1'].length > 0" class="mt-2">
+                                        <div *ngFor="let archivo of documentos['pdfgp1']; let i = index"
+                                            class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-truncate" style="max-width: 80%">
+                                                📄 {{ archivo.name }}
+                                            </span>
+                                            <button type="button" class="boton-danger-sm ms-2"
+                                                (click)="eliminarArchivo('pdfgp1', i, inputpdfgp1)">
+                                                <i class="feather icon-trash btn-icon-prepend"></i>
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="mb-3 d-flex flex-column h-100">
+                                <label class="form-label1 negri">XML:</label>
+                                <div class="position-relative d-flex flex-column flex-grow-1"
+                                    style="min-height: 10px; padding-bottom: 1rem;">
+                                    <input class="form-control" type="file" id="xmlgp1" accept="application/xml"
+                                        multiple #inputxmlgp1 (change)="onFileSelect($event, 'xmlgp1', inputxmlgp1)"
+                                        [disabled]="!validacionCompr" />
+
+                                    <div *ngIf="documentos['xmlgp1'] && documentos['xmlgp1'].length > 0" class="mt-2">
+                                        <div *ngFor="let archivo of documentos['xmlgp1']; let i = index"
+                                            class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-truncate" style="max-width: 80%">
+                                                📄 {{ archivo.name }}
+                                            </span>
+                                            <button type="button" class="boton-danger-sm ms-2"
+                                                (click)="eliminarArchivo('xmlgp1', i, inputxmlgp1)">
+                                                <i class="feather icon-trash btn-icon-prepend"></i>
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="mostrarFormularioFactura" class="p-4 mb-4 rounded" style="background-color: #f9f9f9ef;">
+                    <h4>Gasto por programa1</h4>
+                    <br>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Unidad administrativa:*</label>
+                                <ng-select [items]="opcionesUnidad" bindLabel="nombre" bindValue="id"
+                                    [(ngModel)]="nuevoDetalle.unidad" placeholder="Selecciona">
+                                </ng-select>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Actividad:*</label>
+                                <ng-select [items]="opcionesActividad" bindLabel="nombre" bindValue="id"
+                                    [(ngModel)]="nuevoDetalle.actividad" placeholder="Selecciona">
+                                </ng-select>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Partida:*</label>
+                                <ng-select [items]="opcionesPartida" bindLabel="nombre" bindValue="id"
+                                    [(ngModel)]="nuevoDetalle.partida" placeholder="Selecciona">
+                                </ng-select>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-end">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Importe por partida:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" [(ngModel)]="nuevoDetalle.importe"
+                                        id="nuevoDetalle.importe" placeholder="0.00" step="0.01" min="0"
+                                        (blur)="actualizarImporteLetra()" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label class="form-label negri">Cuenta con PDF y XML:</label>
+                                <ng-select [items]="opcionesCuentaConFactura" bindLabel="nombre" bindValue="id"
+                                    [(ngModel)]="nuevoDetalle.cuenta_con_factura" placeholder="Selecciona">
+                                </ng-select>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 d-flex align-items-end">
+                            <div class="mb-3">
+                                <button class="btn text-white d-flex justify-content-center align-items-center" style="
+          width: 36px;
+          height: 36px;
+          background-color: #960948;
+          border-radius: 50%;
+          padding: 0;
+          border: none;
+        " (click)="agregarDetalleSimple()" title="Agregar">
+                                    <i class="bi bi-plus" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+<br>
+ <table border="1" class="table table-striped table-bordered table-hover"
+                        style="width: 100%; text-align: center;">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Unidad</th>
+        <th>Actividad</th>
+        <th>Partida</th>
+        <th>Importe</th>
+        <th>RFC Emisor</th>
+        <th>Nombre Emisor</th>
+        <th>Concepto</th>
+        <th>Folio</th>
+        <th>Factura Extranjera</th>
+        <th>Tax ID</th>
+        <th>País Origen</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of detalles; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.unidad }}</td>
+        <td>{{ item.actividad }}</td>
+        <td>{{ item.partida }}</td>
+        <td>${{ item.importe }}</td>
+        <td>{{ item.rfc_emisor }}</td>
+        <td>{{ item.nombre_emisor }}</td>
+        <td>{{ item.concepto }}</td>
+        <td>{{ item.folio }}</td>
+        <td>{{ item.factura_extranjera }}</td>
+        <td>{{ item.tax_id }}</td>
+        <td>{{ item.pais }}</td>
+        <td>
+          <button (click)="eliminarDetalle(i)" class="boton-danger-sm ms-2">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+                </div>
+                <br>
+                <button type="button" (click)="enviarDatos()" class="btn btn-primary">Enviar</button>
             </div>
         </div>
     </div>

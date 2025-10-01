@@ -393,7 +393,8 @@
                             <div class="mb-3">
                                 <label class="form-label negri">Cuenta con PDF y XML:</label>
                                 <ng-select [items]="opcionesCuentaConFactura" bindLabel="nombre" bindValue="id"
-                                    [(ngModel)]="nuevoDetalle.cuenta_con_factura" placeholder="Selecciona">
+                                    [(ngModel)]="nuevoDetalle.cuenta_con_factura"
+                                    (change)="onCambioCuentaFactura($event)" placeholder="Selecciona">
                                 </ng-select>
                             </div>
                         </div>
@@ -406,52 +407,59 @@
           border-radius: 50%;
           padding: 0;
           border: none;
-        " (click)="agregarDetalleSimple()" title="Agregar">
+        " (click)="agregarDetalle2()" title="Agregar">
                                     <i class="bi bi-plus" style="font-size: 1.2rem;"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-<br>
- <table border="1" class="table table-striped table-bordered table-hover"
-                        style="width: 100%; text-align: center;">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Unidad</th>
-        <th>Actividad</th>
-        <th>Partida</th>
-        <th>Importe</th>
-        <th>RFC Emisor</th>
-        <th>Nombre Emisor</th>
-        <th>Concepto</th>
-        <th>Folio</th>
-        <th>Factura Extranjera</th>
-        <th>Tax ID</th>
-        <th>País Origen</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of detalles; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ item.unidad }}</td>
-        <td>{{ item.actividad }}</td>
-        <td>{{ item.partida }}</td>
-        <td>${{ item.importe }}</td>
-        <td>{{ item.rfc_emisor }}</td>
-        <td>{{ item.nombre_emisor }}</td>
-        <td>{{ item.concepto }}</td>
-        <td>{{ item.folio }}</td>
-        <td>{{ item.factura_extranjera }}</td>
-        <td>{{ item.tax_id }}</td>
-        <td>{{ item.pais }}</td>
-        <td>
-          <button (click)="eliminarDetalle(i)" class="boton-danger-sm ms-2">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+                    <br>
+                    <div style="overflow-x: auto; width: 100%;">
+                        <table border="1" class="table table-striped table-bordered table-hover"
+                            style="width: 100%; text-align: center; min-width: 1000px;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Unidad</th>
+                                    <th>Actividad</th>
+                                    <th>Partida</th>
+                                    <th>Importe</th>
+                                    <th>RFC Emisor</th>
+                                    <th>Nombre Emisor</th>
+                                    <th>Concepto</th>
+                                    <th>Folio</th>
+                                    <th>Factura Extranjera</th>
+                                    <th>Tax ID</th>
+                                    <th>País Origen</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of detalles; let i = index">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ item.unidad }}</td>
+                                    <td>{{ item.actividad }}</td>
+                                    <td>{{ item.partida }}</td>
+                                    <td>${{ item.importe }}</td>
+                                    <td>{{ item.rfc_emisor }}</td>
+                                    <td>{{ item.nombre_emisor }}</td>
+                                    <td>{{ item.concepto }}</td>
+                                    <td>{{ item.folio }}</td>
+                                    <td>{{ item.factura_extranjera }}</td>
+                                    <td>{{ item.tax_id }}</td>
+                                    <td>{{ item.pais }}</td>
+                                    <td>
+                                        <button (click)="eliminarDetalle(i)"
+                                            class="boton-danger-sm ms-2">Eliminar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div *ngIf="detalles.length === 0" class="text-center my-3">
+                            <p><strong>No hay datos para mostrar</strong></p>
+                        </div>
+                    </div>
+
                 </div>
                 <br>
                 <button type="button" (click)="enviarDatos()" class="btn btn-primary">Enviar</button>
@@ -459,3 +467,88 @@
         </div>
     </div>
 </div>
+
+
+<ng-template #xlModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Factura Manual</h5>
+
+        <button type="button" class="btn-close" (click)="modal.close('by: close icon')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label class="form-label">RFC emisor:</label>
+                        <input [(ngModel)]="nuevoDetalle.rfc_emisor" type="text" class="form-control"
+                            placeholder="REFCXXXXXXER5" (blur)="validarRfc(nuevoDetalle.rfc_emisor)" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label class="form-label">Nombre emisor:</label>
+                        <input [(ngModel)]="nuevoDetalle.nombre_emisor" type="text" class="form-control"
+                            placeholder="" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label class="form-label">Concepto del gasto:</label>
+                        <input [(ngModel)]="nuevoDetalle.concepto" type="text" class="form-control" placeholder="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label class="form-label">Folio de factura:</label>
+                        <input [(ngModel)]="nuevoDetalle.folio" type="text" class="form-control" placeholder="" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label class="form-label negri">País de origen:</label>
+                        <ng-select [items]="opcionesPais" bindLabel="nombre" bindValue="id"
+                            [(ngModel)]="nuevoDetalle.pais" placeholder="Selecciona">
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label class="form-label negri">Factura extranjera:</label>
+                        <ng-select [items]="opcionesCuentaConFactura" bindLabel="nombre" bindValue="id"
+                            [(ngModel)]="nuevoDetalle.factura_extranjera"  (change)="onCambioFacturaExtranjera($event)" placeholder="Selecciona">
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="nuevoDetalle.factura_extranjera === '1'">
+            <div class="col-sm-4">
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label class="form-label">Tax ID:</label>
+                        <input [(ngModel)]="nuevoDetalle.tax_id" type="text" class="form-control" placeholder="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close('by: close button')">Cerrar</button>
+        <button type="button" (click)="agregarDetalle2()"  class="btn btn-primary">Enviar</button>
+    </div>
+</ng-template>
